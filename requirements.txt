@@ -1,0 +1,12 @@
+pandas
+numpy
+scikit-learn
+streamlit
+xgboost
+fastapi
+uvicorn
+pydantic
+requests
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
