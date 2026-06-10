@@ -1,4 +1,4 @@
-# AI Health Monitoring System – Diabetes Prediction
+# AI-Powered Diabetes Risk Prediction System
 
 A Machine Learning-powered web application for predicting diabetes risk based on patient health data.
 
@@ -10,81 +10,69 @@ This project combines:
 
 ---
 
-# Project Overview
-
-This project uses the **Diabetes Dataset (`diabetes.csv`)** from Kaggle to build a predictive healthcare application.
-
-The workflow includes:
-
-- Data Cleaning & Preprocessing
-- Exploratory Data Analysis (EDA)
-- Feature Scaling
-- Training Multiple ML Models
-- Model Evaluation
-- Selecting the Best Model
-- Saving Model using Pickle
-- Building REST API using FastAPI
-- Creating Interactive UI using Streamlit
-
-The final model predicts whether a patient is likely to have diabetes based on health-related parameters.
+## Overview
+This is a Machine Learning healthcare prototype designed to predict the likelihood of diabetes based on patient health metrics. The project features a responsive web interface built with Streamlit, backed by a FastAPI web server that handles data validation and model inference.
 
 ---
 
-# Tech Stack
+## Workflow
 
-## Machine Learning
-- Python
-- Pandas
-- NumPy
-- Scikit-learn
-- Matplotlib
-- Seaborn
+1. **Frontend Interface (Streamlit)**
+   - The user interface (`app.py`) collects essential health metrics from the user, including Pregnancies, Glucose, Blood Pressure, Skin Thickness, Insulin, BMI, Diabetes Pedigree Function, and Age.
+   - Upon clicking the prediction button, the app constructs a JSON payload containing the input data and sends a POST request to the backend API.
 
-## Backend
-- FastAPI
-- Uvicorn
+2. **Backend API (FastAPI)**
+   - The backend (`backend/main.py`) exposes an `/ingest` endpoint to receive the health data.
+   - It utilizes Pydantic (`backend/schemas.py`) to strictly validate the incoming data types, value ranges, and required fields before processing.
 
-## Frontend
-- Streamlit
+3. **Machine Learning Model**
+   - Validated data is passed to the prediction module (`prediction.py`).
+   - A pre-trained Machine Learning model (`models/best_model.pkl`), trained on the Pima Indians Diabetes Dataset, is loaded using `joblib`.
+   - The model evaluates the patient's data array to compute both the binary prediction (diabetic or not) and the probability score.
 
-## Model Serialization
-- Pickle (`.pkl`)
+4. **Result Delivery**
+   - The backend returns the prediction and probability back to the Streamlit frontend.
+   - The UI then dynamically displays a clear "High Risk" or "Low Risk" result along with the probability percentage and relevant health recommendations.
 
 ---
 
-# Dataset
+## Tech Stack
+
+* **Frontend:** Streamlit
+* **Backend:** FastAPI, Uvicorn
+* **Data Validation:** Pydantic
+* **Machine Learning:** Python, Scikit-learn, XGBoost, Pandas, NumPy, Matplotlib, Seaborn
+* **Model Serialization:** Joblib / Pickle (`.pkl`)
+
+---
+
+## Dataset
 
 Dataset Used:
-- **Pima Indians Diabetes Dataset**
-- Source: Kaggle
+- **Pima Indians Diabetes Dataset** (Source: Kaggle)
 
 Features:
-- Pregnancies
-- Glucose
-- Blood Pressure
-- Skin Thickness
-- Insulin
-- BMI
-- Diabetes Pedigree Function
-- Age
+- Pregnancies, Glucose, Blood Pressure, Skin Thickness, Insulin, BMI, Diabetes Pedigree Function, Age
 
 Target:
 - Outcome (0 = Non-Diabetic, 1 = Diabetic)
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```bash
 project/
 │
 ├── backend/
-│   ├── app.py
+│   ├── main.py
 │   └── schemas.py
 │
+├── models/
+│   └── best_model.pkl
+│
+├── app.py
 ├── prediction.py
-├── diabetes_model.pkl
-├── streamlit_app.py
 ├── test.ipynb
 ├── diabetes.csv
 ├── requirements.txt
@@ -93,166 +81,49 @@ project/
 
 ---
 
-# Machine Learning Workflow
+## Installation & Setup
 
-## Data Preprocessing
-- Handled missing values
-- Performed feature scaling
-- Conducted EDA
-- Prepared dataset for training
-
-## Models Trained
-- Logistic Regression
-- Decision Tree
-- Random Forest
-- KNN
-- SVM *(if used)*
-
-## Model Selection
-After evaluating multiple models, the **Random Forest Classifier** was selected as the best-performing model.
-
-The trained model was saved as:
-
-```python
-diabetes_model.pkl
-```
-
----
-
-# FastAPI Backend
-
-The backend exposes an API endpoint:
-
-```http
-POST /ingest
-```
-
-## Sample Request
-
-```json
-{
-  "pregnancies": 2,
-  "glucose": 120,
-  "blood_pressure": 70,
-  "skin_thickness": 20,
-  "insulin": 85,
-  "bmi": 28.5,
-  "diabetes_pedigree": 0.45,
-  "age": 32
-}
-```
-
-## Sample Response
-
-```json
-{
-  "prediction": 1,
-  "probability": 0.87
-}
-```
-
----
-
-# Backend Logic
-
-The API receives user health data and sends it to:
-
-```python
-predict_diabetes()
-```
-
-from:
-
-```python
-prediction.py
-```
-
-The function loads the trained `.pkl` model and returns:
-- Prediction Result
-- Prediction Probability
-
----
-
-# Streamlit Frontend
-
-The frontend was developed using Streamlit to provide an interactive user interface.
-
-Users can:
-- Enter patient health data
-- Submit values
-- View prediction results instantly
-
----
-
-# Installation & Setup
-
-## 1. Clone Repository
-
+### 1. Clone Repository
 ```bash
-git clone https://github.com/your-username/your-repository-name.git
-cd your-repository-name
+git clone https://github.com/Mishab655/Diabetes_prediction.git
+cd Diabetes_prediction
 ```
 
----
-
-## 2. Create Virtual Environment
-
+### 2. Create Virtual Environment
 ```bash
 python -m venv venv
 ```
+Activate Environment:
+- **Windows:** `venv\Scripts\activate`
+- **Mac/Linux:** `source venv/bin/activate`
 
-### Activate Environment
-
-### Windows
-```bash
-venv\Scripts\activate
-```
-
-### Mac/Linux
-```bash
-source venv/bin/activate
-```
-
----
-
-## 3. Install Dependencies
-
+### 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-# Run the FastAPI Backend
+## How to Run
 
-```bash
-uvicorn backend.app:app --reload
-```
+1. **Start the FastAPI backend:**
+   Open a terminal and run:
+   ```bash
+   uvicorn backend.main:app --reload
+   ```
+   Backend URL: `http://127.0.0.1:8000`
+   Swagger API Docs: `http://127.0.0.1:8000/docs`
 
-Backend URL:
-
-```bash
-http://127.0.0.1:8000
-```
-
-Swagger API Docs:
-
-```bash
-http://127.0.0.1:8000/docs
-```
-
----
-
-# Run the Streamlit Frontend
-
-```bash
-streamlit run streamlit_app.py
-```
+2. **Start the Streamlit frontend:**
+   Open a separate terminal and run:
+   ```bash
+   streamlit run app.py
+   ```
+   The web application will open in your default browser.
 
 ---
 
-# Future Improvements
-
+## Future Improvements
 - Deploy application to cloud
 - Add database integration
 - Improve model performance
@@ -261,26 +132,10 @@ streamlit run streamlit_app.py
 
 ---
 
-# Learning Outcomes
-
-Through this project, I learned:
-
-- End-to-end Machine Learning workflow
-- Data preprocessing techniques
-- Model evaluation and selection
-- FastAPI backend development
-- API integration
-- Streamlit frontend development
-- ML model deployment basics
-
----
-
-# Author
-
+## Author
 **Mishab M**
 
 ---
 
-# License
-
+## License
 This project is created for educational and learning purposes.
